@@ -2,13 +2,17 @@ import pygame as pg
 import random
 pg.init()
 pg.font.init()
-
+restart="Press r for restart"
 TITLE = "Half Pong"
 WIDTH = 800
 HEIGHT = 480
-
+score=0
 
 FPS = 60
+
+ARIAL_FONT_PATH = pg.font.match_font('arial')
+ARIAL_FONT_48= pg.font.Font(ARIAL_FONT_PATH, 48)
+ARIAL_FONT_36= pg.font.Font(ARIAL_FONT_PATH, 36)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -52,6 +56,15 @@ while running:
             if event.type == pg.K_ESCAPE:
                 running = False
                 continue
+            elif event.key==pg.K_r:
+                game_over= False
+                platform_rect.centerx=WIDTH/2
+                platform_rect.bottom=HEIGHT-PLATFORM_HEIGHT
+                circle_rect.center= [WIDTH/2, HEIGHT/2]
+                circle_x_speed = 0
+                circle_y_speed = CIRCLE_SPEED
+                circle_first_collide=False
+                score=0
 
     screen.fill(BLACK)
 
@@ -65,7 +78,13 @@ while running:
 
         if platform_rect.colliderect(circle_rect):
             if not circle_first_collide:
-                # з відси пиши
+                if random.randint(0, 1) == 0:
+                    circle_x_speed = CIRCLE_SPEED
+                else:
+                    circle_x_speed = -CIRCLE_SPEED
+                circle_first_collide = True
+            circle_y_speed = -CIRCLE_SPEED
+            score += 1
         pg.draw.rect(screen, WHITE, platform_rect)
 
     circle_rect.x += circle_x_speed
@@ -79,11 +98,20 @@ while running:
     elif circle_rect.left <= 0:
         circle_x_speed = CIRCLE_SPEED
     elif circle_rect.right >= WIDTH:
-        circle_x_speed = CIRCLE_SPEED
+        circle_x_speed = -CIRCLE_SPEED
 
 
     pg.draw.circle(screen, WHITE, circle_rect.center, CIRCLE_RADIUS)
-
+    if not game_over:
+        score_surface = ARIAL_FONT_48.render(str(score), True, WHITE)
+        screen.blit(score_surface, [WIDTH / 2 - score_surface.get_width() / 2,
+                                    15])
+    else:
+        retry_surface = ARIAL_FONT_36.render(restart,  True, WHITE)
+        screen.blit(score_surface, [WIDTH / 2 - score_surface.get_width() / 2,
+                                    HEIGHT/3])
+        screen.blit(retry_surface, [WIDTH / 2 - score_surface.get_width() / 2,
+                                    HEIGHT / 3+ score_surface.get_height()])
     clock.tick(FPS)
 
     pg.display.flip()

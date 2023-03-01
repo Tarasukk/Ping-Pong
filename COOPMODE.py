@@ -1,7 +1,7 @@
 import pygame
 import pygame as pg
 import random
-from Textures import Player, Player2
+from Textures2 import Player, Player2
 pg.init()
 pg.font.init()
 restart="Press R for restart"
@@ -40,14 +40,14 @@ def update2(player2):
     player2.update()
 
 platform_rect = pg.rect.Rect(
-    WIDTH / 2 - PLATFORM_WIDTH / 2,
+    (WIDTH / 2 - PLATFORM_WIDTH / 2)-100,
     HEIGHT - PLATFORM_HEIGHT * 2,
     PLATFORM_WIDTH,
     PLATFORM_HEIGHT,
 )
 platform_rect2 = pg.rect.Rect(
-    WIDTH / 2 - PLATFORM_WIDTH/2 ,
-    PLATFORM_HEIGHT ,
+    (WIDTH / 2 - PLATFORM_WIDTH / 2)+100,
+    HEIGHT - PLATFORM_HEIGHT * 2,
     PLATFORM_WIDTH,
     PLATFORM_HEIGHT,
 )
@@ -57,12 +57,27 @@ CIRCLE_SPEED = 10
 circle_first_collide = False
 circle_x_speed = 0
 circle_y_speed = CIRCLE_SPEED
+
+CIRCLE_RADIUS2=15
+CIRCLE_SPEED2 = 10
+circle_first_collide2 = False
+circle_x_speed2 = 0
+circle_y_speed2 = CIRCLE_SPEED2
+
 circle_rect = pg.rect.Rect(
     WIDTH / 2 - CIRCLE_RADIUS,
     HEIGHT / 2 - CIRCLE_RADIUS,
     CIRCLE_RADIUS * 2,
     CIRCLE_RADIUS * 2,
 )
+
+circle_rect2 = pg.rect.Rect(
+    WIDTH / 2 - CIRCLE_RADIUS2,
+    HEIGHT / 2 - CIRCLE_RADIUS2,
+    CIRCLE_RADIUS2 * 2,
+    CIRCLE_RADIUS2 * 2,
+)
+
 running = True
 game_over = False
 clock = pg.time.Clock()
@@ -76,21 +91,25 @@ while running:
                 running = False
                 continue
             elif event.key==pg.K_r:
-                player.x = 350
+                player.x = 250
                 player.y = 450
-                player2.x=350
-                player2.y=15
+                player2.x=450
+                player2.y=450
                 game_over= False
-                platform_rect.centerx=WIDTH/2
+                platform_rect.centerx=(WIDTH/2)-100
                 platform_rect.bottom=HEIGHT - PLATFORM_HEIGHT
-                platform_rect2.centerx = WIDTH / 2
-                platform_rect2.bottom = 30
+                platform_rect2.centerx = (WIDTH / 2)+100
+                platform_rect2.bottom = HEIGHT - PLATFORM_HEIGHT
                 circle_rect.center= [WIDTH/2, HEIGHT/2]
+                circle_rect2.center = [WIDTH / 2, HEIGHT / 2]
                 circle_x_speed = 0
+                circle_x_speed2=0
+                circle_y_speed2=CIRCLE_SPEED2
                 circle_y_speed = CIRCLE_SPEED
                 circle_first_collide=False
+                circle_first_collide2=False
                 score=0
-                i=0
+
     screen.fill(BLACK)
     screen.blit(platform, plt)
     if event.type == pygame.KEYDOWN:
@@ -117,6 +136,7 @@ while running:
         elif keys[pg.K_RIGHT]:
             player2.x += PLATFORM_SPEED
 
+
         if platform_rect.colliderect(circle_rect):
             if not circle_first_collide:
                 if random.randint(0, 1) == 0:
@@ -128,50 +148,88 @@ while running:
             score += 1
         pg.draw.rect(screen, WHITE, platform_rect)
 
+
+
+        if platform_rect.colliderect(circle_rect2):
+            if not circle_first_collide2:
+                if random.randint(0, 1) == 0:
+                    circle_x_speed2 = (CIRCLE_SPEED2/(random.uniform(1, 2)))
+                else:
+                    circle_x_speed2 = -(CIRCLE_SPEED2/(random.randint(1, 2)))
+                circle_first_collide2 = True
+            circle_y_speed2 = -CIRCLE_SPEED2
+            score += 1
+
+
+
         if platform_rect2.colliderect(circle_rect):
-            if circle_first_collide:
+            if not circle_first_collide:
                 if random.randint(0, 1) == 0:
                     circle_x_speed = (CIRCLE_SPEED/(random.uniform(1, 2)))
                 else:
                     circle_x_speed = -(CIRCLE_SPEED/(random.uniform(1, 2)))
                 circle_first_collide = False
-            circle_y_speed = CIRCLE_SPEED
+            circle_y_speed = -CIRCLE_SPEED
             score += 1
         pg.draw.rect(screen, WHITE, platform_rect2)
+
+
+
+        if platform_rect2.colliderect(circle_rect2):
+            if not circle_first_collide2:
+                if random.randint(0, 1) == 0:
+                    circle_x_speed2 = (CIRCLE_SPEED2/(random.uniform(1, 2)))
+                else:
+                    circle_x_speed2 = -(CIRCLE_SPEED2/(random.uniform(1, 2)))
+                circle_first_collide2 = False
+            circle_y_speed2 = -CIRCLE_SPEED2
+            score += 1
         update(player)
         render(screen, player)
         update2(player2)
         render2(screen, player2)
 
+
     circle_rect.x += circle_x_speed
     circle_rect.y += circle_y_speed
+    circle_rect2.x += circle_x_speed2
+    circle_rect2.y += circle_y_speed2
 
     if circle_rect.bottom >= HEIGHT:
         game_over = True
         circle_y_speed = -CIRCLE_SPEED
     elif circle_rect.top <= 0:
-        game_over = True
         circle_y_speed = CIRCLE_SPEED
     elif circle_rect.left <= 0:
         circle_x_speed = CIRCLE_SPEED
     elif circle_rect.right >= WIDTH:
         circle_x_speed = -CIRCLE_SPEED
+
+    if circle_rect2.bottom >= HEIGHT:
+        game_over = True
+        circle_y_speed2 = -CIRCLE_SPEED2
+    elif circle_rect2.top <= 0:
+        circle_y_speed2 = CIRCLE_SPEED2
+    elif circle_rect2.left <= 0:
+        circle_x_speed2 = CIRCLE_SPEED2
+    elif circle_rect2.right >= WIDTH:
+        circle_x_speed2 = -CIRCLE_SPEED2
     update(player)
 
     pg.draw.circle(screen, WHITE, circle_rect.center, CIRCLE_RADIUS)
+    pg.draw.circle(screen, (255, 0, 0), circle_rect2.center, CIRCLE_RADIUS2)
+
     if not game_over:
         score_surface = ARIAL_FONT_48.render(str(score), True, WHITE)
-        # screen.blit(score_surface, [WIDTH / 2 - score_surface.get_width() / 2,
-        #                             15])
+        screen.blit(score_surface, [WIDTH / 2 - score_surface.get_width() / 2,
+                                    15])
     else:
-        player.x = 350
-        player.y = 450
+
         retry_surface = ARIAL_FONT_36.render(restart,  True, WHITE)
-        # screen.blit(score_surface, [WIDTH / 2 - score_surface.get_width() / 2,
-        #                             HEIGHT/3])
-        # screen.blit(retry_surface, [WIDTH / 2 - score_surface.get_width() / 2,
-        #                             HEIGHT / 3+ score_surface.get_height()])
-        screen.blit(retry_surface,[280, 240])
+        screen.blit(score_surface, [WIDTH / 2 - score_surface.get_width() / 2,
+                                    HEIGHT/3])
+        screen.blit(retry_surface, [WIDTH / 2 - score_surface.get_width() / 2,
+                                    HEIGHT / 3+ score_surface.get_height()])
     clock.tick(FPS)
 
     pg.display.flip()

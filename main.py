@@ -4,6 +4,11 @@ import random
 from Textures import Player, Player2
 pg.init()
 pg.font.init()
+pg.mixer.init()
+music = pygame.mixer.music.load('res\BackgroundMusic.wav')
+hit=pg.mixer.Sound('res\Ball-hit.wav')
+gameover=pg.mixer.Sound('res\GameOver.wav')
+pg.mixer.music.play(-1)
 restart="Press R for restart"
 TITLE = "Ping Pong"
 i=0
@@ -125,6 +130,7 @@ while running:
                     circle_x_speed = -(CIRCLE_SPEED/(random.randint(1, 2)))
                 circle_first_collide = True
             circle_y_speed = -CIRCLE_SPEED
+            pg.mixer.Sound.play(hit)
             score += 1
         pg.draw.rect(screen, WHITE, platform_rect)
 
@@ -136,6 +142,7 @@ while running:
                     circle_x_speed = -(CIRCLE_SPEED/(random.uniform(1, 2)))
                 circle_first_collide = False
             circle_y_speed = CIRCLE_SPEED
+            pg.mixer.Sound.play(hit)
             score += 1
         pg.draw.rect(screen, WHITE, platform_rect2)
         update(player)
@@ -172,6 +179,7 @@ while running:
         # screen.blit(retry_surface, [WIDTH / 2 - score_surface.get_width() / 2,
         #                             HEIGHT / 3+ score_surface.get_height()])
         screen.blit(retry_surface,[280, 240])
+        pg.mixer.Sound.play(gameover)
     clock.tick(FPS)
 
     pg.display.flip()

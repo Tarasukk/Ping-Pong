@@ -65,14 +65,14 @@ circle_x_speed2 = 0
 circle_y_speed2 = CIRCLE_SPEED2
 
 circle_rect = pg.rect.Rect(
-    WIDTH / 2 - CIRCLE_RADIUS,
+    WIDTH / 2 - CIRCLE_RADIUS-100,
     HEIGHT / 2 - CIRCLE_RADIUS,
     CIRCLE_RADIUS * 2,
     CIRCLE_RADIUS * 2,
 )
 
 circle_rect2 = pg.rect.Rect(
-    WIDTH / 2 - CIRCLE_RADIUS2,
+    WIDTH / 2 - CIRCLE_RADIUS2+100,
     HEIGHT / 2 - CIRCLE_RADIUS2,
     CIRCLE_RADIUS2 * 2,
     CIRCLE_RADIUS2 * 2,
@@ -100,8 +100,8 @@ while running:
                 platform_rect.bottom=HEIGHT - PLATFORM_HEIGHT
                 platform_rect2.centerx = (WIDTH / 2)+100
                 platform_rect2.bottom = HEIGHT - PLATFORM_HEIGHT
-                circle_rect.center= [WIDTH/2, HEIGHT/2]
-                circle_rect2.center = [WIDTH / 2, HEIGHT / 2]
+                circle_rect.center= [(WIDTH/2)-100, HEIGHT/2]
+                circle_rect2.center = [(WIDTH / 2)+100, HEIGHT / 2]
                 circle_x_speed = 0
                 circle_x_speed2=0
                 circle_y_speed2=CIRCLE_SPEED2
